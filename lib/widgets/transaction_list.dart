@@ -5,14 +5,15 @@ import '../models/transaction.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Transaction> transactions;
+  final Function deleteTx;
 
   // ignore: use_key_in_widget_constructors
-  const TransactionList(this.transactions);
+  const TransactionList(this.transactions, this.deleteTx);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 500,
+      height: 600,
       child: transactions.isEmpty
           ? Column(
               children: <Widget>[
@@ -25,7 +26,7 @@ class TransactionList extends StatelessWidget {
                 ),
                 // ignore: sized_box_for_whitespace
                 Container(
-                    height: 400,
+                    height: 500,
                     child: Image.asset('assets/images/waiting.png',
                         fit: BoxFit.cover)),
               ],
@@ -34,45 +35,37 @@ class TransactionList extends StatelessWidget {
               // ignore: missing_return
               itemBuilder: (ctx, index) {
                 return Card(
-                    child: Row(children: <Widget>[
-                  Container(
-                    margin: const EdgeInsets.symmetric(
-                      vertical: 15,
-                      horizontal: 15,
-                    ),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Theme.of(context).primaryColor,
-                        width: 2,
-                      ),
-                    ),
-                    padding: const EdgeInsets.all(10),
-                    child: Text(
-                      'Ksh ${transactions[index].amount.toStringAsFixed(2)}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ),
+                  elevation: 5,
+                  margin: const EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 5,
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        transactions[index].title,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      radius: 30,
+                      child: Padding(
+                        padding: const EdgeInsets.all(5),
+                        child: FittedBox(
+                          child: Text('Sh ${transactions[index].amount}'),
                         ),
                       ),
-                      Text(DateFormat.yMMMMd().format(transactions[index].date),
-                          style: const TextStyle(
-                            color: Colors.grey,
-                          ))
-                    ],
+                    ),
+                    title: Text(
+                      transactions[index].title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    subtitle: Text(
+                      DateFormat.yMMMd().format(transactions[index].date),
+                    ),
+                    trailing: IconButton(
+                        icon: const Icon(Icons.delete),
+                        color: Theme.of(context).errorColor,
+                        onPressed: () => deleteTx(transactions[index].id),
+                        ),
                   ),
-                ]));
+                );
               },
               itemCount: transactions.length,
             ),
